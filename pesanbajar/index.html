@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Pesan Bahan Ajar</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-wrapper">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-placeholder">
+                    <img src="assets/logo.png" alt="Universitas Terbuka">
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <div class="login-content">
+                <h1>Selamat Datang</h1>
+                <p class="subtitle">Masuk ke akun Anda</p>
+
+                <form id="loginForm" class="login-form">
+                    <!-- Email Input -->
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="nama@email.com" 
+                            required
+                        >
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Masukkan password" 
+                            required
+                        >
+                    </div>
+
+                    <!-- Forgot Password Link -->
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Lupa Password?</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-login">Masuk</button>
+                </form>
+
+                <!-- Sign Up Link -->
+                <div class="signup-section">
+                    <p>Belum punya akun? <a href="#" id="signupLink">Daftar Sekarang</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Popup Modal -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Error Masuk</h2>
+                <button class="close-btn" id="closeErrorModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage">Terjadi kesalahan saat masuk. Silakan coba lagi.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close" id="closeErrorBtn">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/login.js"></script>
+</body>
+</html>

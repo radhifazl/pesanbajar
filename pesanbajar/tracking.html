@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracking Pengiriman</title>
+
+    <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar collapsed" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="logo-placeholder">
+                        <img src="assets/logo.png" alt="Universitas Terbuka" />
+                    </div>
+
+                    <span class="title">Pesan Bajar</span>
+                </div>
+
+                <button
+                    id="sidebarToggle"
+                    class="sidebarToggle"
+                    aria-label="Toggle sidebar"
+                >
+                    ☰
+                </button>
+            </div>
+
+                <nav class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="icon">ℹ</span>
+                        <span class="text">Beranda</span>
+                    </a>
+
+                    <a href="stok.html" class="nav-link ">
+                        <span class="icon">📦</span>
+                        <span class="text">Stok Bahan Ajar</span>
+                    </a>
+
+                <a href="tracking.html" class="nav-link active">
+                    <span class="icon">🚚</span>
+                    <span class="text">Tracking Pengiriman</span>
+                </a>
+
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    data-target="laporanSubmenu"
+                >
+                    <span class="icon">📄</span>
+                    <span class="text">Laporan</span>
+                </button>
+
+                <div class="submenu" id="laporanSubmenu">
+                    <a href="#" class="sub-link">
+                        Monitoring Proses DO Bahan Ajar
+                    </a>
+
+                    <a href="#" class="sub-link">
+                        Rekap Bahan Ajar
+                    </a>
+                </div>
+
+                <a href="histori.html" class="nav-link">
+                    <span class="icon">🕘</span>
+                    <span class="text">Histori Transaksi Bahan Ajar</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h1>Tracking Pengiriman</h1>
+                <p id="dashboard-greeting" class="subtitle"></p>
+            </header>
+
+            <section class="dashboard-tracking">
+                <div class="tracking-search">
+                    <label for="trackingCode">
+                        Cari Nomor DO
+                    </label>
+
+                    <div class="search-wrapper">
+                        <input
+                            id="trackingCode"
+                            type="text"
+                            placeholder="Masukkan nomor DO ..."
+                        />
+
+                        <button
+                            id="trackingSearch"
+                            type="button"
+                        >
+                            Cari
+                        </button>
+                    </div>
+
+                    <p
+                        id="trackingMessage"
+                        class="tracking-message"
+                    ></p>
+                </div>
+
+                <div
+                    class="tracking-result"
+                    id="trackingResult"
+                    hidden
+                >
+                    <article class="card tracking-card">
+                        <h2>Detail Pengiriman</h2>
+
+                        <p>
+                            <strong>Nomor DO:</strong>
+                            <span id="trackingNomor"></span>
+                        </p>
+
+                        <p>
+                            <strong>Nama:</strong>
+                            <span id="trackingNama"></span>
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            <span id="trackingStatus"></span>
+                        </p>
+
+                        <p>
+                            <strong>Ekspedisi:</strong>
+                            <span id="trackingEkspedisi"></span>
+                        </p>
+
+                        <p>
+                            <strong>Tanggal Kirim:</strong>
+                            <span id="trackingTanggal"></span>
+                        </p>
+
+                        <p>
+                            <strong>Paket:</strong>
+                            <span id="trackingPaket"></span>
+                        </p>
+
+                        <p>
+                            <strong>Total:</strong>
+                            <span id="trackingTotal"></span>
+                        </p>
+                    </article>
+
+                    <article class="card tracking-history">
+                        <h2>Riwayat Pengiriman</h2>
+
+                        <div
+                            id="trackingHistory"
+                            class="tracking-timeline"
+                        ></div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { dataTracking } from './js/data.js';
+
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle =
+            document.getElementById('sidebarToggle');
+
+        sidebarToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        document
+            .querySelectorAll('.menu-toggle')
+            .forEach(button => {
+                button.addEventListener('click', () => {
+                    const submenu = document.getElementById(
+                        button.dataset.target
+                    );
+
+                    submenu.classList.toggle('open');
+                    button.classList.toggle('active');
+                });
+            });
+
+        const dashboardGreeting =
+            document.getElementById(
+                'dashboard-greeting'
+            );
+
+        if (dashboardGreeting) {
+            const currentHour =
+                new Date().getHours();
+
+            let greetingText =
+                'Selamat Datang';
+
+            if (
+                currentHour >= 5 &&
+                currentHour < 12
+            ) {
+                greetingText =
+                    'Selamat Pagi!';
+            } else if (
+                currentHour >= 12 &&
+                currentHour < 18
+            ) {
+                greetingText =
+                    'Selamat Siang!';
+            } else if (
+                currentHour >= 18 &&
+                currentHour < 22
+            ) {
+                greetingText =
+                    'Selamat Sore!';
+            } else {
+                greetingText =
+                    'Selamat Malam!';
+            }
+
+            dashboardGreeting.textContent =
+                greetingText;
+        }
+
+        const trackingCode =
+            document.getElementById(
+                'trackingCode'
+            );
+
+        const trackingSearch =
+            document.getElementById(
+                'trackingSearch'
+            );
+
+        const trackingMessage =
+            document.getElementById(
+                'trackingMessage'
+            );
+
+        const trackingResult =
+            document.getElementById(
+                'trackingResult'
+            );
+
+        const trackingNomor =
+            document.getElementById(
+                'trackingNomor'
+            );
+
+        const trackingNama =
+            document.getElementById(
+                'trackingNama'
+            );
+
+        const trackingStatus =
+            document.getElementById(
+                'trackingStatus'
+            );
+
+        const trackingEkspedisi =
+            document.getElementById(
+                'trackingEkspedisi'
+            );
+
+        const trackingTanggal =
+            document.getElementById(
+                'trackingTanggal'
+            );
+
+        const trackingPaket =
+            document.getElementById(
+                'trackingPaket'
+            );
+
+        const trackingTotal =
+            document.getElementById(
+                'trackingTotal'
+            );
+
+        const trackingHistory =
+            document.getElementById(
+                'trackingHistory'
+            );
+
+        function renderTrackingItem(
+            tracking
+        ) {
+            trackingNomor.textContent =
+                tracking.nomorDO;
+
+            trackingNama.textContent =
+                tracking.nama;
+
+            trackingStatus.textContent =
+                tracking.status;
+
+            trackingEkspedisi.textContent =
+                tracking.ekspedisi;
+
+            trackingTanggal.textContent =
+                tracking.tanggalKirim;
+
+            trackingPaket.textContent =
+                tracking.paket;
+
+            trackingTotal.textContent =
+                tracking.total;
+
+            trackingHistory.innerHTML = '';
+
+            tracking.perjalanan.forEach(
+                (step, index) => {
+                    const item =
+                        document.createElement('div');
+
+                    item.className =
+                        'timeline-item';
+
+                    item.innerHTML = `
+                        <div class="timeline-point"></div>
+
+                        ${
+                            index !==
+                            tracking.perjalanan.length - 1
+                                ? '<div class="timeline-line"></div>'
+                                : ''
+                        }
+
+                        <div class="timeline-content">
+                            <span class="timeline-date">
+                                ${step.waktu}
+                            </span>
+
+                            <p class="timeline-text">
+                                ${step.keterangan}
+                            </p>
+                        </div>
+                    `;
+
+                    trackingHistory.appendChild(
+                        item
+                    );
+                }
+            );
+            trackingStatus.className =
+                '';
+
+            if (
+                tracking.status ===
+                'Dalam Perjalanan'
+            ) {
+                trackingStatus.classList.add(
+                    'status-progress'
+                );
+            }
+
+            if (
+                tracking.status ===
+                'Dikirim'
+            ) {
+                trackingStatus.classList.add(
+                    'status-success'
+                );
+            }
+
+            trackingResult.hidden =
+                false;
+
+            trackingMessage.textContent =
+                '';
+        }
+
+        function setTrackingNotFound() {
+            trackingResult.hidden = true;
+
+            trackingMessage.textContent =
+                'Paket tidak ditemukan atau belum dikirim.';
+        }
+
+        function handleTrackingSearch() {
+            const code =
+                trackingCode.value
+                    .trim()
+                    .replace(/\s/g, '');
+
+            if (!code) {
+                trackingMessage.textContent =
+                    'Masukkan nomor DO terlebih dahulu.';
+
+                trackingResult.hidden =
+                    true;
+
+                return;
+            }
+
+            const tracking =
+                dataTracking[code];
+
+            if (!tracking) {
+                setTrackingNotFound();
+                return;
+            }
+
+            renderTrackingItem(
+                tracking
+            );
+        }
+
+        trackingSearch?.addEventListener(
+            'click',
+            handleTrackingSearch
+        );
+
+        trackingCode?.addEventListener(
+            'keydown',
+            event => {
+                if (
+                    event.key === 'Enter'
+                ) {
+                    handleTrackingSearch();
+                }
+            }
+        );
+    </script>
+</body>
+</html>

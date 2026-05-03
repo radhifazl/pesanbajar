@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <style>
+        .bahar-ajar-section {
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+        .bahar-ajar-list-container {
+            flex: 1;
+            min-width: 0;
+            padding: 10px;
+        }
+        .bahar-ajar-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .bahan-ajar-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .bahan-ajar-item:hover {
+            background-color: #f0f0f0;
+        }
+        .bahan-ajar-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .bahar-ajar-detail-container {
+            flex: 1;
+            min-width: 0;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            background: white;
+            border-left: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 18px 50px rgba(40, 65, 120, 0.08);
+            padding: 10px;
+        }
+        .bahar-ajar-detail-container.show {
+            transform: translateX(0);
+        }
+        .detail-content img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar collapsed" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="logo-placeholder">
+                        <img src="assets/logo.png" alt="Universitas Terbuka" />
+                    </div>
+
+                    <span class="title">Pesan Bajar</span>
+                </div>
+
+                <button
+                    id="sidebarToggle"
+                    class="sidebarToggle"
+                    aria-label="Toggle sidebar"
+                >
+                    ☰
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-link">
+                    <span class="icon">ℹ</span>
+                    <span class="text">Beranda</span>
+                </a>
+
+                <a href="stok.html" class="nav-link active">
+                    <span class="icon">📦</span>
+                    <span class="text">Stok Bahan Ajar</span>
+                </a>
+
+                <a href="tracking.html" class="nav-link">
+                    <span class="icon">🚚</span>
+                    <span class="text">Tracking Pengiriman</span>
+                </a>
+
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    data-target="laporanSubmenu"
+                >
+                    <span class="icon">📄</span>
+                    <span class="text">Laporan</span>
+                </button>
+
+                <div class="submenu" id="laporanSubmenu">
+                    <a href="#" class="sub-link">
+                        Monitoring Proses DO Bahan Ajar
+                    </a>
+
+                    <a href="#" class="sub-link">
+                        Rekap Bahan Ajar
+                    </a>
+                </div>
+
+                <a href="histori.html" class="nav-link">
+                    <span class="icon">🕘</span>
+                    <span class="text">Histori Transaksi Bahan Ajar</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h1>Informasi Bahan Ajar</h1>
+                <p id="dashboard-greeting" class="subtitle"></p>
+            </header>
+
+            <section class="bahar-ajar-section">
+                <div class="bahar-ajar-list-container">
+                    <div class="bahar-ajar-list" id="baharAjarList"></div>
+                </div>
+
+                <div class="bahar-ajar-detail-container" id="detailContainer">
+                    <div class="detail-content" id="detailContent">
+                        <p class="no-selection">Pilih bahan ajar untuk melihat detail</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { dataBahanAjar } from './js/data.js';
+
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle =
+            document.getElementById('sidebarToggle');
+
+        sidebarToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        document
+            .querySelectorAll('.menu-toggle')
+            .forEach(button => {
+                button.addEventListener('click', () => {
+                    const submenu = document.getElementById(
+                        button.dataset.target
+                    );
+
+                    submenu.classList.toggle('open');
+                    button.classList.toggle('active');
+                });
+            });
+
+        const dashboardGreeting =
+            document.getElementById(
+                'dashboard-greeting'
+            );
+
+        if (dashboardGreeting) {
+            const currentHour =
+                new Date().getHours();
+
+            let greetingText =
+                'Selamat Datang';
+
+            if (
+                currentHour >= 5 &&
+                currentHour < 12
+            ) {
+                greetingText =
+                    'Selamat Pagi!';
+            } else if (
+                currentHour >= 12 &&
+                currentHour < 18
+            ) {
+                greetingText =
+                    'Selamat Siang!';
+            } else if (
+                currentHour >= 18 &&
+                currentHour < 22
+            ) {
+                greetingText =
+                    'Selamat Sore!';
+            } else {
+                greetingText =
+                    'Selamat Malam!';
+            }
+
+            dashboardGreeting.textContent =
+                greetingText;
+        }
+
+        // Populate bahan ajar list
+        const baharAjarList = document.getElementById('baharAjarList');
+        const detailContainer = document.getElementById('detailContainer');
+        const detailContent = document.getElementById('detailContent');
+
+        dataBahanAjar.forEach(item => {
+            const listItem = document.createElement('div');
+            listItem.className = 'bahan-ajar-item';
+            listItem.textContent = `${item.namaBarang} (${item.kodeBarang})`;
+            listItem.addEventListener('click', () => {
+                // Remove active class from all items
+                document.querySelectorAll('.bahan-ajar-item').forEach(el => el.classList.remove('active'));
+                // Add active to clicked
+                listItem.classList.add('active');
+                // Show details
+                detailContent.innerHTML = `
+                    <button id="backButton">&#8592; Kembali</button>
+                    <br />
+                    <img src="${item.cover}" alt="${item.namaBarang}" />
+                    <h2>${item.namaBarang}</h2>
+                    <p><strong>Kode Barang:</strong> ${item.kodeBarang}</p>
+                    <p><strong>Jenis Barang:</strong> ${item.jenisBarang}</p>
+                    <p><strong>Edisi:</strong> ${item.edisi}</p>
+                    <p><strong>Stok:</strong> ${item.stok}</p>
+                    <p><strong>Kode Lokasi:</strong> ${item.kodeLokasi}</p>
+                `;
+                detailContainer.classList.add('show');
+                const backButton = document.getElementById('backButton');
+                backButton.style.border = 'none';
+                backButton.style.background = 'transparent';
+                backButton.style.color = '#007bff';
+                backButton.style.cursor = 'pointer';
+                backButton.style.marginBottom = '16px';
+
+                backButton.addEventListener('click', () => {
+                    document.querySelectorAll('.bahan-ajar-item').forEach(el => el.classList.remove('active'));
+                    detailContainer.classList.remove('show');
+                    detailContent.innerHTML = '<p class="no-selection">Pilih bahan ajar untuk melihat detail</p>';
+                });
+            });
+            baharAjarList.appendChild(listItem);
+        });
+    </script>
+</body>
+</html>
